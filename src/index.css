@@ -1,0 +1,94 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=DM+Sans:wght@300;400;500;600;700&display=swap');
+
+:root {
+    --bg: #080608;
+    --bg2: #0f0d0f;
+    --bg3: #161316;
+    --gold: #c9a84c;
+    --gold2: #e8c97a;
+    --gold-glow: rgba(201,168,76,0.15);
+    --red: #e63946;
+    --text: #f0ece4;
+    --text2: rgba(240,236,228,0.5);
+    --text3: rgba(240,236,228,0.2);
+    --border: rgba(201,168,76,0.12);
+    --border2: rgba(255,255,255,0.06);
+    --glass: rgba(255,255,255,0.03);
+}
+
+/* NUCLEAR RESET - kills all white backgrounds */
+*, *::before, *::after {
+    margin: 0 !important;
+    padding: 0;
+    box-sizing: border-box !important;
+    background-color: transparent !important;
+}
+
+/* RESTORE NEEDED BACKGROUNDS */
+body {
+    background-color: var(--bg) !important;
+    font-family: 'DM Sans', sans-serif;
+    color: var(--text);
+    overflow-x: hidden;
+}
+
+#root {
+    background-color: var(--bg) !important;
+    min-height: 100vh;
+}
+
+.home { background-color: var(--bg) !important; }
+.detail { background-color: var(--bg) !important; }
+.detail-loading { background-color: var(--bg) !important; }
+.film-loading { background-color: var(--bg) !important; }
+.hero__bg img { background-color: transparent !important; }
+
+.card__score { background-color: rgba(8,6,8,0.9) !important; }
+.card__genre { background-color: rgba(8,6,8,0.85) !important; }
+
+.hdr--scrolled { background-color: rgba(8,6,8,0.96) !important; }
+
+.smodal { background-color: var(--bg2) !important; }
+.smodal-bg { background-color: rgba(0,0,0,0.92) !important; }
+
+.trailer-modal { background-color: var(--bg2) !important; }
+.trailer-backdrop { background-color: rgba(0,0,0,0.94) !important; }
+
+.detail__bg-img { background-color: transparent !important; }
+
+.ftr { background-color: var(--bg2) !important; }
+.ftr__top { background-color: transparent !important; }
+
+.rv__form { background-color: rgba(255,255,255,0.02) !important; }
+.rv__item { background-color: transparent !important; }
+
+.films__genre.active { background-color: var(--gold) !important; }
+.films__genre:hover { background-color: var(--gold-glow) !important; }
+
+.detail__trailer-btn { background-color: var(--gold) !important; }
+.detail__trailer-btn:hover { background-color: var(--gold2) !important; }
+
+.smodal__tab.active { background-color: var(--gold) !important; }
+.smodal__cta { background-color: var(--gold) !important; }
+.smodal__cta:hover { background-color: var(--gold2) !important; }
+
+.rv__submit { background-color: var(--gold) !important; }
+.rv__submit:hover { background-color: var(--gold2) !important; }
+
+.hdr__cta:hover { background-color: var(--gold) !important; }
+
+.hero__btn-primary { background-color: var(--gold) !important; }
+.hero__btn-primary:hover { background-color: var(--gold2) !important; }
+
+.detail__poster-wrap { background-color: transparent !important; }
+.detail__poster { background-color: transparent !important; }
+
+::-webkit-scrollbar { width: 3px; }
+::-webkit-scrollbar-track { background-color: var(--bg) !important; }
+::-webkit-scrollbar-thumb {
+    background: linear-gradient(var(--gold), var(--gold2)) !important;
+    border-radius: 10px;
+}
+
+a { text-decoration: none; color: inherit; }
+::selection { background: var(--gold); color: #000; }

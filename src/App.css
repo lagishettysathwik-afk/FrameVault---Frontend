@@ -1,0 +1,10 @@
+*, *::before, *::after {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+#root {
+    background: var(--bg);
+    min-height: 100vh;
+}

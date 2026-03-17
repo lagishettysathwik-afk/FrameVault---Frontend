@@ -1,0 +1,44 @@
+.skeleton-card { cursor: default; }
+
+.skeleton-poster {
+    width: 100%;
+    aspect-ratio: 2/3;
+    border-radius: 4px;
+    margin-bottom: 12px;
+    background: var(--bg3);
+    border: 1px solid var(--border2);
+}
+
+.skeleton-info {
+    padding: 0 2px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.skeleton-title { height: 13px; border-radius: 2px; background: var(--bg3); width: 85%; }
+.skeleton-year { height: 11px; border-radius: 2px; background: var(--bg3); width: 40%; }
+.skeleton-stars { height: 11px; border-radius: 2px; background: var(--bg3); width: 55%; }
+
+.shimmer { position: relative; overflow: hidden; }
+
+.shimmer::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+        90deg,
+        transparent 0%,
+        rgba(201,168,76,0.05) 40%,
+        rgba(201,168,76,0.1) 50%,
+        rgba(201,168,76,0.05) 60%,
+        transparent 100%
+    );
+    background-size: 200% 100%;
+    animation: shimmerMove 1.8s infinite;
+}
+
+@keyframes shimmerMove {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+}
