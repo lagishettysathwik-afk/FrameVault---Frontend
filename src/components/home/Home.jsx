@@ -22,13 +22,11 @@ function Home() {
     const [showTrailer, setShowTrailer] = useState(false)
     const [searchParams] = useSearchParams()
 
-    // Fetch movies
     useEffect(function() {
         // eslint-disable-next-line react-hooks/set-state-in-effect
         setLoading(true)
         api.get('/movies')
         .then(function(res) {
-            console.log('First movie:', res.data[0])
             setMovies(res.data)
             if (res.data.length > 0) setFeatured(res.data[0])
             setLoading(false)
@@ -39,7 +37,6 @@ function Home() {
         })
     }, [])
 
-    // Read URL params
     useEffect(function() {
         const genreParam    = searchParams.get('genre')
         const searchParam   = searchParams.get('search')
@@ -51,7 +48,6 @@ function Home() {
         if (languageParam) setActiveLanguage(languageParam)
     }, [searchParams])
 
-    // Listen for genre events
     useEffect(function() {
         function handleSetGenre(e) {
             setActiveGenre(e.detail)
@@ -62,7 +58,6 @@ function Home() {
         }
     }, [])
 
-    // ORIGINAL FILTER (AS YOU HAD)
     const filtered = movies.filter(function(movie) {
         const matchSearch   = movie.title.toLowerCase().includes(search.toLowerCase())
         const matchGenre    = activeGenre === 'All' || movie.genre === activeGenre
@@ -70,10 +65,6 @@ function Home() {
                               (movie.language && movie.language.trim() === activeLanguage.trim())
         return matchSearch && matchGenre && matchLanguage
     })
-
-    console.log('Active Language:', activeLanguage)
-    console.log('Filtered count:', filtered.length)
-    console.log('Total movies:', movies.length)
 
     return (
         <PageTransition>
@@ -103,11 +94,7 @@ function Home() {
                         </div>
 
                         <div className="hero__content">
-                            <motion.div
-                                initial={{ opacity: 0 }}
-                                animate={{ opacity: 1 }}
-                                transition={{ duration: 0.6 }}
-                            >
+                            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
                                 <div className="hero__eyebrow">
                                     <span className="hero__pulse-dot"></span>
                                     <span>Featured Film</span>
@@ -117,33 +104,27 @@ function Home() {
                                 <h1 className="hero__title">
                                     {featured.title.split(' ').map(function(word, i) {
                                         return (
-                                            <motion.span
-                                                key={i}
-                                                className="hero__title-word"
-                                                initial={{ opacity: 0, y: 30 }}
-                                                animate={{ opacity: 1, y: 0 }}
-                                                transition={{ duration: 0.5, delay: 0.2 + i * 0.12 }}
-                                            >
+                                            <motion.span key={i} className="hero__title-word">
                                                 {word}
                                             </motion.span>
                                         )
                                     })}
                                 </h1>
 
-                                <motion.div className="hero__meta">
+                                <div className="hero__meta">
                                     <span className="hero__genre-badge">{featured.genre}</span>
                                     <span className="hero__meta-sep">·</span>
                                     <span className="hero__year">{featured.releaseDate}</span>
-                                </motion.div>
+                                </div>
 
-                                <motion.div className="hero__actions">
+                                <div className="hero__actions">
                                     <Link to={'/movie/' + featured.imdbId} className="hero__btn-primary">
                                         View Film
                                     </Link>
                                     <button className="hero__btn-secondary" onClick={() => setShowTrailer(true)}>
                                         ▶ Watch Trailer
                                     </button>
-                                </motion.div>
+                                </div>
                             </motion.div>
                         </div>
                     </div>
