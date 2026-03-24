@@ -66,19 +66,23 @@ function Home() {
     }, [])
 
     // ✅ SAFE FILTER
-    const filtered = movies.filter((movie) => {
-        const title = (movie.title || "").toLowerCase()
-        const genre = movie.genre || ""
-        const language = (movie.language || "").toLowerCase().trim()
+  const filtered = movies.filter(function(movie) {
+    const title = (movie.title || "").toLowerCase()
+    const genre = movie.genre || ""
+    const language = (movie.language || "").toLowerCase().trim()
 
-        const matchSearch = title.includes(search.toLowerCase())
-        const matchGenre = activeGenre === 'All' || genre === activeGenre
-        const matchLanguage =
-            activeLanguage === 'All' ||
-            language === activeLanguage.toLowerCase().trim()
+    const matchSearch =
+        search === "" || title.includes(search.toLowerCase().trim())
 
-        return matchSearch && matchGenre && matchLanguage
-    })
+    const matchGenre =
+        activeGenre === 'All' || genre === activeGenre
+
+    const matchLanguage =
+        activeLanguage === 'All' ||
+        language === activeLanguage.toLowerCase().trim()
+
+    return matchSearch && matchGenre && matchLanguage
+})
 
     return (
         <PageTransition>
