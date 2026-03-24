@@ -1,5 +1,5 @@
+/* eslint-disable no-unused-vars */
 import { useState, useEffect } from 'react'
-// eslint-disable-next-line no-unused-vars
 import { motion } from 'framer-motion'
 import { Link, useSearchParams } from 'react-router-dom'
 import api from '../../api/axiosConfig'
@@ -41,7 +41,6 @@ function Home() {
         const genreParam    = searchParams.get('genre')
         const searchParam   = searchParams.get('search')
         const languageParam = searchParams.get('language')
-
         // eslint-disable-next-line react-hooks/set-state-in-effect
         if (genreParam)    setActiveGenre(genreParam)
         if (searchParam)   setSearch(searchParam)
@@ -94,7 +93,12 @@ function Home() {
                         </div>
 
                         <div className="hero__content">
-                            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
+                            <motion.div
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                transition={{ duration: 0.6 }}
+                                style={{ willChange: 'opacity' }}
+                            >
                                 <div className="hero__eyebrow">
                                     <span className="hero__pulse-dot"></span>
                                     <span>Featured Film</span>
@@ -104,7 +108,14 @@ function Home() {
                                 <h1 className="hero__title">
                                     {featured.title.split(' ').map(function(word, i) {
                                         return (
-                                            <motion.span key={i} className="hero__title-word">
+                                            <motion.span
+                                                key={i}
+                                                className="hero__title-word"
+                                                initial={{ opacity: 0, y: 30 }}
+                                                animate={{ opacity: 1, y: 0 }}
+                                                transition={{ duration: 0.5, delay: 0.2 + i * 0.12 }}
+                                                style={{ willChange: 'opacity, transform' }}
+                                            >
                                                 {word}
                                             </motion.span>
                                         )
@@ -122,32 +133,67 @@ function Home() {
                                         View Film
                                     </Link>
                                     <button className="hero__btn-secondary" onClick={() => setShowTrailer(true)}>
-                                        ▶ Watch Trailer
+                                        <span className="hero__play-circle">▶</span>
+                                        Watch Trailer
                                     </button>
                                 </div>
                             </motion.div>
                         </div>
+
+                        <div className="hero__scroll-hint">
+                            <div className="hero__scroll-line"></div>
+                            <span>Scroll to explore</span>
+                        </div>
+
+                        <motion.div
+                            className="hero__stats"
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            transition={{ duration: 0.5, delay: 1 }}
+                        >
+                            <div className="hero__stat">
+                                <span className="hero__stat-num">87<sub>%</sub></span>
+                                <span className="hero__stat-lbl">Critics</span>
+                            </div>
+                            <div className="hero__stat-div"></div>
+                            <div className="hero__stat">
+                                <span className="hero__stat-num">92<sub>%</sub></span>
+                                <span className="hero__stat-lbl">Audience</span>
+                            </div>
+                            <div className="hero__stat-div"></div>
+                            <div className="hero__stat">
+                                <span className="hero__stat-num">74</span>
+                                <span className="hero__stat-lbl">Meta</span>
+                            </div>
+                        </motion.div>
                     </div>
                 )}
 
+                {/* FILMS SECTION */}
                 <div className="films">
                     <div className="films__header">
-                        <h2>The Collection</h2>
-                        <p>{filtered.length} films curated</p>
-
-                        <input
-                            type="text"
-                            placeholder="Filter titles..."
-                            value={search}
-                            onChange={e => setSearch(e.target.value)}
-                        />
+                        <div className="films__title-wrap">
+                            <h2 className="films__title">The Collection</h2>
+                            <p className="films__subtitle">{filtered.length} films curated</p>
+                        </div>
+                        <div className="films__search">
+                            <span>◎</span>
+                            <input
+                                type="text"
+                                placeholder="Filter titles..."
+                                value={search}
+                                onChange={e => setSearch(e.target.value)}
+                            />
+                        </div>
                     </div>
 
+                    {/* LANGUAGE FILTER */}
                     <div className="films__languages">
                         {languages.map(function(lang) {
                             return (
                                 <button
                                     key={lang}
+                                    className={'films__language ' + (activeLanguage === lang ? 'active' : '')}
                                     onClick={() => {
                                         setActiveLanguage(lang)
                                         setActiveGenre('All')
@@ -159,10 +205,15 @@ function Home() {
                         })}
                     </div>
 
+                    {/* GENRE FILTER */}
                     <div className="films__genres">
                         {genres.map(function(g) {
                             return (
-                                <button key={g} onClick={() => setActiveGenre(g)}>
+                                <button
+                                    key={g}
+                                    className={'films__genre ' + (activeGenre === g ? 'active' : '')}
+                                    onClick={() => setActiveGenre(g)}
+                                >
                                     {g}
                                 </button>
                             )
@@ -176,11 +227,24 @@ function Home() {
                             })}
                         </div>
                     ) : filtered.length === 0 ? (
-                        <p>No films found</p>
+                        <div className="films__empty">
+                            <p>No films found</p>
+                        </div>
                     ) : (
                         <div className="films__grid">
-                            {filtered.map(function(movie) {
-                                return <MovieList key={movie.id} movie={movie} />
+                            {filtered.map(function(movie, i) {
+                                return (
+                                    <motion.div
+                                        key={movie.id}
+                                        initial={{ opacity: 0 }}
+                                        whileInView={{ opacity: 1 }}
+                                        viewport={{ once: true, margin: '-30px' }}
+                                        transition={{ duration: 0.3 }}
+                                        style={{ willChange: 'opacity' }}
+                                    >
+                                        <MovieList movie={movie} />
+                                    </motion.div>
+                                )
                             })}
                         </div>
                     )}
