@@ -23,66 +23,57 @@ function Home() {
     const [searchParams] = useSearchParams()
 
     // Fetch movies
-    useEffect(() => {
+    useEffect(function() {
         // eslint-disable-next-line react-hooks/set-state-in-effect
         setLoading(true)
-
         api.get('/movies')
-            .then((res) => {
-                const validMovies = (res.data || []).filter(m => m && m.title)
-
-                setMovies(validMovies)
-
-                if (validMovies.length > 0) {
-                    setFeatured(validMovies[0])
-                }
-
-                setLoading(false)
-            })
-            .catch((err) => {
-                console.log(err)
-                setLoading(false)
-            })
+        .then(function(res) {
+            console.log('First movie:', res.data[0])
+            setMovies(res.data)
+            if (res.data.length > 0) setFeatured(res.data[0])
+            setLoading(false)
+        })
+        .catch(function(err) {
+            console.log(err)
+            setLoading(false)
+        })
     }, [])
 
-    // URL params
-    useEffect(() => {
-        const genreParam = searchParams.get('genre')
-        const searchParam = searchParams.get('search')
+    // Read URL params
+    useEffect(function() {
+        const genreParam    = searchParams.get('genre')
+        const searchParam   = searchParams.get('search')
         const languageParam = searchParams.get('language')
 
         // eslint-disable-next-line react-hooks/set-state-in-effect
-        if (genreParam) setActiveGenre(genreParam)
-        if (searchParam) setSearch(searchParam)
+        if (genreParam)    setActiveGenre(genreParam)
+        if (searchParam)   setSearch(searchParam)
         if (languageParam) setActiveLanguage(languageParam)
     }, [searchParams])
 
-    // Genre event
-    useEffect(() => {
-        const handleSetGenre = (e) => setActiveGenre(e.detail)
-
+    // Listen for genre events
+    useEffect(function() {
+        function handleSetGenre(e) {
+            setActiveGenre(e.detail)
+        }
         window.addEventListener('setGenre', handleSetGenre)
-        return () => window.removeEventListener('setGenre', handleSetGenre)
+        return function() {
+            window.removeEventListener('setGenre', handleSetGenre)
+        }
     }, [])
 
-    // ✅ SAFE FILTER
-  const filtered = movies.filter(function(movie) {
-    const title = (movie.title || "").toLowerCase()
-    const genre = movie.genre || ""
-    const language = (movie.language || "").toLowerCase().trim()
+    // ORIGINAL FILTER (AS YOU HAD)
+    const filtered = movies.filter(function(movie) {
+        const matchSearch   = movie.title.toLowerCase().includes(search.toLowerCase())
+        const matchGenre    = activeGenre === 'All' || movie.genre === activeGenre
+        const matchLanguage = activeLanguage === 'All' ||
+                              (movie.language && movie.language.trim() === activeLanguage.trim())
+        return matchSearch && matchGenre && matchLanguage
+    })
 
-    const matchSearch =
-        search === "" || title.includes(search.toLowerCase().trim())
-
-    const matchGenre =
-        activeGenre === 'All' || genre === activeGenre
-
-    const matchLanguage =
-        activeLanguage === 'All' ||
-        language === activeLanguage.toLowerCase().trim()
-
-    return matchSearch && matchGenre && matchLanguage
-})
+    console.log('Active Language:', activeLanguage)
+    console.log('Filtered count:', filtered.length)
+    console.log('Total movies:', movies.length)
 
     return (
         <PageTransition>
@@ -100,87 +91,120 @@ function Home() {
                     <div className="hero">
                         <div className="hero__bg">
                             <img src={featured.poster} alt={featured.title} />
+                            <div className="hero__bg-overlay"></div>
+                            <div className="hero__bg-grain"></div>
+                            <div className="hero__bg-vignette"></div>
+                        </div>
+
+                        <div className="hero__filmstrip">
+                            {Array(20).fill(0).map(function(_, i) {
+                                return <div key={i} className="hero__filmhole"></div>
+                            })}
                         </div>
 
                         <div className="hero__content">
-                            <h1>{featured.title}</h1>
-                            <p>{featured.genre} · {featured.releaseDate}</p>
+                            <motion.div
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                transition={{ duration: 0.6 }}
+                            >
+                                <div className="hero__eyebrow">
+                                    <span className="hero__pulse-dot"></span>
+                                    <span>Featured Film</span>
+                                    <span className="hero__eyebrow-line"></span>
+                                </div>
 
-                            <div>
-                                <Link to={`/movie/${featured.imdbId}`}>
-                                    View Film
-                                </Link>
+                                <h1 className="hero__title">
+                                    {featured.title.split(' ').map(function(word, i) {
+                                        return (
+                                            <motion.span
+                                                key={i}
+                                                className="hero__title-word"
+                                                initial={{ opacity: 0, y: 30 }}
+                                                animate={{ opacity: 1, y: 0 }}
+                                                transition={{ duration: 0.5, delay: 0.2 + i * 0.12 }}
+                                            >
+                                                {word}
+                                            </motion.span>
+                                        )
+                                    })}
+                                </h1>
 
-                                <button onClick={() => setShowTrailer(true)}>
-                                    Watch Trailer
-                                </button>
-                            </div>
+                                <motion.div className="hero__meta">
+                                    <span className="hero__genre-badge">{featured.genre}</span>
+                                    <span className="hero__meta-sep">·</span>
+                                    <span className="hero__year">{featured.releaseDate}</span>
+                                </motion.div>
+
+                                <motion.div className="hero__actions">
+                                    <Link to={'/movie/' + featured.imdbId} className="hero__btn-primary">
+                                        View Film
+                                    </Link>
+                                    <button className="hero__btn-secondary" onClick={() => setShowTrailer(true)}>
+                                        ▶ Watch Trailer
+                                    </button>
+                                </motion.div>
+                            </motion.div>
                         </div>
                     </div>
                 )}
 
                 <div className="films">
-
                     <div className="films__header">
                         <h2>The Collection</h2>
                         <p>{filtered.length} films curated</p>
 
                         <input
                             type="text"
-                            placeholder="Search films..."
+                            placeholder="Filter titles..."
                             value={search}
-                            onChange={(e) => setSearch(e.target.value)}
+                            onChange={e => setSearch(e.target.value)}
                         />
                     </div>
 
-                    {/* Language Filter */}
                     <div className="films__languages">
-                        {languages.map((lang) => (
-                            <button
-                                key={lang}
-                                className={activeLanguage === lang ? 'active' : ''}
-                                onClick={() => {
-                                    setActiveLanguage(lang)
-                                    setActiveGenre('All')
-                                }}
-                            >
-                                {lang}
-                            </button>
-                        ))}
+                        {languages.map(function(lang) {
+                            return (
+                                <button
+                                    key={lang}
+                                    onClick={() => {
+                                        setActiveLanguage(lang)
+                                        setActiveGenre('All')
+                                    }}
+                                >
+                                    {lang}
+                                </button>
+                            )
+                        })}
                     </div>
 
-                    {/* Genre Filter */}
                     <div className="films__genres">
-                        {genres.map((g) => (
-                            <button
-                                key={g}
-                                className={activeGenre === g ? 'active' : ''}
-                                onClick={() => setActiveGenre(g)}
-                            >
-                                {g}
-                            </button>
-                        ))}
+                        {genres.map(function(g) {
+                            return (
+                                <button key={g} onClick={() => setActiveGenre(g)}>
+                                    {g}
+                                </button>
+                            )
+                        })}
                     </div>
 
                     {loading ? (
                         <div className="films__grid">
-                            {Array(6).fill(0).map((_, i) => (
-                                <SkeletonCard key={i} />
-                            ))}
+                            {Array(12).fill(0).map(function(_, i) {
+                                return <SkeletonCard key={i} />
+                            })}
                         </div>
                     ) : filtered.length === 0 ? (
-                        <div className="films__empty">
-                            <p>No films found</p>
-                        </div>
+                        <p>No films found</p>
                     ) : (
                         <div className="films__grid">
-                            {filtered.map((movie) => (
-                                <MovieList key={movie.id} movie={movie} />
-                            ))}
+                            {filtered.map(function(movie) {
+                                return <MovieList key={movie.id} movie={movie} />
+                            })}
                         </div>
                     )}
-
                 </div>
+
             </div>
         </PageTransition>
     )
